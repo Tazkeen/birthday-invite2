@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tazkeen's 21st Birthday Invite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #111;
+      font-family: 'Playfair Display', serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Main container */
+    .container {
+      position: relative;
+      width: 320px;
+      height: 400px; /* increase height to show full invite */
+      overflow: visible;
+      position: relative; /* to contain absolutely positioned children */
+      cursor: pointer;
+    }
+
+    /* Envelope body */
+    .envelope {
+      width: 100%;
+      height: 200px; /* keep envelope smaller */
+      background: white;
+      border: 2px solid black;
+      border-radius: 10px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      overflow: visible; /* allow invite to overflow */
+    }
+
+    /* Envelope flap */
+    .flap {
+      position: absolute;
+      top: -35%;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: white;
+      /* Add borders all around except the bottom to create flap shape */
+      border: 2px solid black;
+      border-bottom: none;
+      border-bottom: 2px solid black;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      transform-origin: top;
+      transition: transform 1s ease-in-out;
+      z-index: 1;
+    }
+
+    /* Bow on the flap */
+    .bow {
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 70px;
+      background: url('black-bow.png.avif') no-repeat center/contain;
+      background-size: 100%;
+      pointer-events: none;
+    }
+
+    /* Invitation image */
+    .invite {
+      position: absolute;
+      top: -45%;  /* ~30px below envelope (240 + 30) */
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      width: 350px;
+      height: 520px;
+      background: url('Elegant Pathway to Tazkeen Birthday2.png') center/cover no-repeat; /* CHANGE to your invite image */
+      border: 2px solid black;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+      z-index: 3;
+      opacity: 0;
+    }
+
+    /* Open state animations */
+    .container.open .flap {
+      transform: rotateX(-180deg);
+    }
+    .container.open .invite {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Sparkle effect */
+    .sparkle {
+      animation: sparkle 1s ease infinite alternate;
+    }
+    @keyframes sparkle {
+      from { box-shadow: 0 0 0px white; }
+      to { box-shadow: 0 0 25px white; }
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 600px) {
+      .container {
+        width: 80vw;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Envelope + Invite -->
+  <div class="container" onclick="toggleInvite()">
+    <div class="envelope">
+      <div class="flap">
+        <div class="bow"></div>
+      </div>
+      </div>
+      <div class="invite" id="invite"></div>
+  </div>
+
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="Bella Notte - Jack Jezzro.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- Script -->
+  <script>
+    function toggleInvite() {
+  const container = document.querySelector('.container');
+  const music = document.getElementById('bg-music');
+  const invite = document.getElementById('invite');
+
+  if (container.classList.contains('open')) {
+    // Close envelope
+    container.classList.remove('open');
+    invite.classList.remove('sparkle');
+
+    // Fade out music
+    let fadeOut = setInterval(() => {
+      if (music.volume > 0) {
+        music.volume = Math.max(0, music.volume - 0.05);
+      } else {
+        music.pause();
+        clearInterval(fadeOut);
+      }
+    }, 100);
+
+  } else {
+    // Open envelope
+    container.classList.add('open');
+    invite.classList.add('sparkle');
+
+    // Play and fade in music
+    music.volume = 0;
+    music.play().catch(() => {
+      console.log("Music autoplay blocked, waiting for interaction.");
+    });
+
+    let fadeIn = setInterval(() => {
+      if (music.volume < 1) {
+        music.volume = Math.min(1, music.volume + 0.05);
+      } else {
+        clearInterval(fadeIn);
+      }
+    }, 100);
+  }
+}
+  </script>
+</body>
+</html>
